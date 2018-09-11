@@ -1845,13 +1845,14 @@ static void init_cgroup_housekeeping(struct cgroup *cgrp)
 	cgrp->max_descendants = INT_MAX;
 	cgrp->max_depth = INT_MAX;
 
+    //pgmkkh : subsys 확인 후 e_csets 리스트 초기화
 	for_each_subsys(ss, ssid)
 		INIT_LIST_HEAD(&cgrp->e_csets[ssid]);
 
 	init_waitqueue_head(&cgrp->offline_waitq);
 	INIT_WORK(&cgrp->release_agent_work, cgroup1_release_agent);
 }
-
+//pgmkkh : 최초 cgroup root의 cgrp 변수, flag 등 초기화
 void init_cgroup_root(struct cgroup_root *root, struct cgroup_sb_opts *opts)
 {
 	struct cgroup *cgrp = &root->cgrp;

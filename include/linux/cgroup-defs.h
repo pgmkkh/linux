@@ -400,6 +400,8 @@ struct cgroup {
 	 * following lists all css_sets which point to this cgroup's css
 	 * for the given subsystem.
 	 */
+
+    // pgmkkh : cgroup은 cgroup_subsys_state( css )를 따로 리스트로 관리한다..?(추측)
 	struct list_head e_csets[CGROUP_SUBSYS_COUNT];
 
 	/*

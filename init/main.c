@@ -514,12 +514,14 @@ static void __init mm_init(void)
 	pti_init();
 }
 
+//pgmkkh : 2018.09.11 Test
+//pgmkkh : asmlinkage -> 어셈블리 코드에서 직접 호출할 수 있는 함수
 asmlinkage __visible void __init start_kernel(void)
 {
 	char *command_line;
 	char *after_dashes;
 
-// IMRT : thread_union 내에서, 커널 스택에 의해 thread_info가 corrupt되지 않도록, init_tack 내에 stack끝에 magic number를 설정. 
+// IMRT : thread_union 내에서, 커널 스택에 의해 thread_info가 corrupt되지 않도록, init_task 내에 stack끝에 magic number를 설정. 
 	set_task_stack_end_magic(&init_task);
 // IMRT : 현재 구동중인 물리적인 core number를 logical core num 0로 세팅.
 	smp_setup_processor_id();

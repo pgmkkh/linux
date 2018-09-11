@@ -257,6 +257,7 @@ void __init setup_arch(char **cmdline_p)
 	init_mm.end_data   = (unsigned long) _edata;
 	init_mm.brk	   = (unsigned long) _end;
 	// cmdline_p에 boot_command_line주소를 대입한다.
+    // pgmkkh : 현재 boot_command_line은 NULL (추측)
 	*cmdline_p = boot_command_line;
 
 	// IMRT> fixmap은 컴파일 타임에 가상 주소공간이 이미 결정된 매핑 영역이다.

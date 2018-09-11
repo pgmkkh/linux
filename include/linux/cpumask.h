@@ -800,7 +800,6 @@ static inline void
 set_cpu_online(unsigned int cpu, bool online)
 {
 	if (online)
-		// IMRT>
 		cpumask_set_cpu(cpu, &__cpu_online_mask);
 	else
 		cpumask_clear_cpu(cpu, &__cpu_online_mask);
