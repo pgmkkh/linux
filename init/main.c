@@ -514,7 +514,6 @@ static void __init mm_init(void)
 	pti_init();
 }
 
-//pgmkkh : 2018.09.11 Test
 //pgmkkh : asmlinkage -> 어셈블리 코드에서 직접 호출할 수 있는 함수
 asmlinkage __visible void __init start_kernel(void)
 {

@@ -727,7 +727,7 @@ int __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
 
 	memblock_dbg("memblock_reserve: [%pa-%pa] %pF\n",
 		     &base, &end, (void *)_RET_IP_);
-
+// pgmkkh : 2018-09-19  Page table 개념 + memblock 개념 다시보고 들어오기..ㅠ//
 	return memblock_add_range(&memblock.reserved, base, size, MAX_NUMNODES, 0);
 }
 

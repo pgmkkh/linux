@@ -343,12 +343,13 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
 	 */
 	if (WARN_ON((phys ^ virt) & ~PAGE_MASK))
 		return;
-
+    //pgmkkh : PAGE_MASK = 00~~ 0011 1111 1111 1111 1111 1111
 	phys &= PAGE_MASK;
 	addr = virt & PAGE_MASK;
 	length = PAGE_ALIGN(size + (virt & ~PAGE_MASK));
 
 	end = addr + length;
+    //pgmkkh : 해당하는 pgd 찾고 pud -> pmd 찾아서 맵핑 ..? (추측)
 	do {
 		// IMRT> next: 다음 pgd entry의 값
 		next = pgd_addr_end(addr, end);
@@ -875,7 +876,7 @@ void __set_fixmap(enum fixed_addresses idx,
 		flush_tlb_kernel_range(addr, addr+PAGE_SIZE);
 	}
 }
-
+// pgmkkh : dt의 fixmap 주소 반환 + 해당 주소 pgd -> pud -> pmd 순으로 맵핑하는건가?(추측)
 void *__init __fixmap_remap_fdt(phys_addr_t dt_phys, int *size, pgprot_t prot)
 {
 	// IMRT> dt_virt_base: fixmap에서 dt를 로딩할 block의 base address
