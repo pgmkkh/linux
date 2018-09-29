@@ -470,7 +470,7 @@ void __init arm64_memblock_init(void)
 	 * pagetables with memblock.
 	 */
     // pgmkkh : _text ~ _end 까지 메모리를 reserved 함..?(kernel 영역을 reserved)
-        // IMRT > 커널 영역을 reserve 한다.
+    // IMRT > 커널 영역을 reserve 한다.
 	memblock_reserve(__pa_symbol(_text), _end - _text);
 #ifdef CONFIG_BLK_DEV_INITRD
 	if (initrd_start) {
