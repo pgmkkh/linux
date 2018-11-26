@@ -267,6 +267,8 @@ struct page * __meminit sparse_mem_map_populate(unsigned long pnum, int nid,
 	start = (unsigned long)map;
 	end = (unsigned long)(map + PAGES_PER_SECTION);
 
+	// IMRT >> vmemmap 매핑공간에 일괄 매핑 (pfn과 page 변환을 section_mem_map을
+	// 거치지 않고 바로 접근 가능)
 	if (vmemmap_populate(start, end, nid, altmap))
 		return NULL;
 

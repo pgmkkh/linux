@@ -225,19 +225,24 @@ static void __init reserve_elfcorehdr(void)
  */
 static phys_addr_t __init max_zone_dma_phys(void)
 {
+	// IMRT >> DRAM start > 4G => start / DRAM start < 4G => 0
 	phys_addr_t offset = memblock_start_of_DRAM() & GENMASK_ULL(63, 32);
+	// IMRT >> DRAM end > offset + 4G => offset + 4G / else DRAM end
 	return min(offset + (1ULL << 32), memblock_end_of_DRAM());
 }
 
-#ifdef CONFIG_NUMA
+#ifdef CONFIG_NUMA // IMRT >> yes!
 
+// IMRT >> 모든 메모리의 노드 및 존 정보 초기화
 static void __init zone_sizes_init(unsigned long min, unsigned long max)
 {
 	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
 
+    // IMRT ZONE_DMA32 = 4GB pfn, ZONE_NORMAL = max_pfn
 	if (IS_ENABLED(CONFIG_ZONE_DMA32))
 		max_zone_pfns[ZONE_DMA32] = PFN_DOWN(max_zone_dma_phys());
-	max_zone_pfns[ZONE_NORMAL] = max;
+	// IMRT >> DMA32 빼고 나머지 전부 NORMAL
+	max_zone_pfns[ZONE_NORMAL] = max; 
 
 	free_area_init_nodes(max_zone_pfns);
 }
@@ -289,6 +294,7 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
 #ifdef CONFIG_HAVE_ARCH_PFN_VALID
 int pfn_valid(unsigned long pfn)
 {
+    // IMRT >> pfn은 memblock에 있으며, mapping 되어 있어야 valid하다고 판단
 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
 }
 EXPORT_SYMBOL(pfn_valid);
@@ -299,6 +305,7 @@ static void __init arm64_memory_present(void)
 {
 }
 #else
+// IMRT : 각 memblock의 memory region에 대해 sparsemem의 섹션으로 초기화
 static void __init arm64_memory_present(void)
 {
 	struct memblock_region *reg;
@@ -306,6 +313,7 @@ static void __init arm64_memory_present(void)
 	for_each_memblock(memory, reg) {
 		int nid = memblock_get_region_node(reg);
 
+		// IMRT : 각 섹션에 노드 id를 기록
 		memory_present(nid, memblock_region_memory_base_pfn(reg),
 				memblock_region_memory_end_pfn(reg));
 	}
@@ -502,6 +510,8 @@ void __init arm64_memblock_init(void)
 	memblock_allow_resize();
 }
 
+
+// IMRT : 부트 메모리 초기화
 void __init bootmem_init(void)
 {
 	unsigned long min, max;
@@ -509,18 +519,23 @@ void __init bootmem_init(void)
 	min = PFN_UP(memblock_start_of_DRAM());
 	max = PFN_DOWN(memblock_end_of_DRAM());
 
+	// IMRT : 커널 파라미터(memtest)로 메모리 패턴 테스트 수행
 	early_memtest(min << PAGE_SHIFT, max << PAGE_SHIFT);
 
 	max_pfn = max_low_pfn = max;
 
+	// IMRT : NUMA 시스템 초기화
 	arm64_numa_init();
 	/*
 	 * Sparsemem tries to allocate bootmem in memory_present(), so must be
 	 * done after the fixed reservations.
 	 */
+	// IMRT : mem_section(mem_map) 할당
 	arm64_memory_present();
 
+	// IMRT : mem_section(mem_map) 초기화
 	sparse_init();
+	// IMRT : zone 및 node(pgdat) 초기화
 	zone_sizes_init(min, max);
 
 	memblock_dump_all();
